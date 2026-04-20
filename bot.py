@@ -241,6 +241,36 @@ async def yt_mode(call: CallbackQuery):
     user_state[call.from_user.id] = "youtube"
     await call.message.answer("YouTube link tashlang")
     await call.answer()
+        # ---------------- YOUTUBE ----------------
+if state == "youtube":
+        url = message.text.split("?")[0]
+
+    if "youtube.com" not in url and "youtu.be" not in url:
+            await message.answer("❌ YouTube link yubor")
+            return
+
+        await message.answer("⏳ yuklanmoqda...")
+
+        try:
+            filename = f"{uuid.uuid4()}.mp4"
+            ydl_opts = {
+            "format": "best[height<=480]",
+            "cookiefile": "www.youtube.com_cookies.txt",
+            "outtmpl": filename,
+            "noplaylist": True,
+            "quiet": False
+        }
+
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                ydl.download([url])
+
+            await message.answer_video(FSInputFile(filename))
+            os.remove(filename)
+
+        except Exception as e:
+            print(e)
+            await message.answer("❌ YouTube xatolik")
+        return
 #--------- MUSIC BOT ---------
 @dp.callback_query(F.data == "music")
 async def music_mode(call: CallbackQuery):
@@ -291,37 +321,6 @@ async def router(message: Message):
             print(e)
             await message.answer("❌ QR xatolik")
 
-        return
-
-    # ---------------- YOUTUBE ----------------
-    if state == "youtube":
-        url = message.text.split("?")[0]
-
-        if "youtube.com" not in url and "youtu.be" not in url:
-            await message.answer("❌ YouTube link yubor")
-            return
-
-        await message.answer("⏳ yuklanmoqda...")
-
-        try:
-            filename = f"{uuid.uuid4()}.mp4"
-            ydl_opts = {
-            "format": "best[height<=480]",
-            "cookiefile": "www.youtube.com_cookies.txt",
-            "outtmpl": filename,
-            "noplaylist": True,
-            "quiet": False
-        }
-
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                ydl.download([url])
-
-            await message.answer_video(FSInputFile(filename))
-            os.remove(filename)
-
-        except Exception as e:
-            print(e)
-            await message.answer("❌ YouTube xatolik")
         return
 #-------- MUSIC -----------
 
