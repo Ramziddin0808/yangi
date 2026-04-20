@@ -235,16 +235,14 @@ async def arab_mess(message:Message):
 async def Aloqa(message: Message):
     await message.answer("Aloqa: @Ramziddin0808")
 
-#-------- YOUTUBE -----------
-@dp.callback_query(F.data == "youtube")
-async def yt_mode(call: CallbackQuery):
-    user_state[call.from_user.id] = "youtube"
-    await call.message.answer("YouTube link tashlang")
-    await call.answer()
-if state == "youtube":
-        url = message.text.split("?")[0]
+@dp.message()
+async def youtube_handler(message: Message):
+    state = user_state.get(message.from_user.id)
 
-    if "youtube.com" not in url and "youtu.be" not in url:
+    if state == "youtube":
+        url = message.text.strip()
+
+        if "youtube.com" not in url and "youtu.be" not in url:
             await message.answer("❌ YouTube link yubor")
             return
 
@@ -252,13 +250,13 @@ if state == "youtube":
 
         try:
             filename = f"{uuid.uuid4()}.mp4"
+
             ydl_opts = {
-            "format": "best[height<=480]",
-            "cookiefile": "www.youtube.com_cookies.txt",
-            "outtmpl": filename,
-            "noplaylist": True,
-            "quiet": False
-        }
+                "format": "best[height<=480]",
+                "outtmpl": filename,
+                "noplaylist": True,
+                "quiet": False
+            }
 
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 ydl.download([url])
@@ -269,7 +267,6 @@ if state == "youtube":
         except Exception as e:
             print(e)
             await message.answer("❌ YouTube xatolik")
-        return
 #--------- MUSIC BOT ---------
 @dp.callback_query(F.data == "music")
 async def music_mode(call: CallbackQuery):
