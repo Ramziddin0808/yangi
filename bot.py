@@ -305,8 +305,7 @@ async def router(message: Message):
 
         try:
             filename = f"{uuid.uuid4()}.mp4"
-            
-        ydl_opts = {
+            ydl_opts = {
             "format": "best[height<=480]",
             "cookiefile": "www.youtube.com_cookies.txt",
             "outtmpl": filename,
