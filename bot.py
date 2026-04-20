@@ -234,39 +234,6 @@ async def arab_mess(message:Message):
 @dp.message(F.text == 'Aloqa')
 async def Aloqa(message: Message):
     await message.answer("Aloqa: @Ramziddin0808")
-
-@dp.message()
-async def youtube_handler(message: Message):
-    state = user_state.get(message.from_user.id)
-
-    if state == "youtube":
-        url = message.text.strip()
-
-        if "youtube.com" not in url and "youtu.be" not in url:
-            await message.answer("❌ YouTube link yubor")
-            return
-
-        await message.answer("⏳ yuklanmoqda...")
-
-        try:
-            filename = f"{uuid.uuid4()}.mp4"
-
-            ydl_opts = {
-                "format": "best[height<=480]",
-                "outtmpl": filename,
-                "noplaylist": True,
-                "quiet": False
-            }
-
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                ydl.download([url])
-
-            await message.answer_video(FSInputFile(filename))
-            os.remove(filename)
-
-        except Exception as e:
-            print(e)
-            await message.answer("❌ YouTube xatolik")
 #--------- MUSIC BOT ---------
 @dp.callback_query(F.data == "music")
 async def music_mode(call: CallbackQuery):
@@ -477,6 +444,38 @@ async def photo_handler(message: Message):
     except Exception as e:
         await message.answer(f"❌ Xatolik: {e}")
         logging.error(e)
+@dp.message()
+async def youtube_handler(message: Message):
+    state = user_state.get(message.from_user.id)
+
+    if state == "youtube":
+        url = message.text.strip()
+
+        if "youtube.com" not in url and "youtu.be" not in url:
+            await message.answer("❌ YouTube link yubor")
+            return
+
+        await message.answer("⏳ yuklanmoqda...")
+
+        try:
+            filename = f"{uuid.uuid4()}.mp4"
+
+            ydl_opts = {
+                "format": "best[height<=480]",
+                "outtmpl": filename,
+                "noplaylist": True,
+                "quiet": False
+            }
+
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                ydl.download([url])
+
+            await message.answer_video(FSInputFile(filename))
+            os.remove(filename)
+
+        except Exception as e:
+            print(e)
+            await message.answer("❌ YouTube xatolik")
 
 
 async def main():
