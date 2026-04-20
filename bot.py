@@ -241,12 +241,6 @@ async def yt_mode(call: CallbackQuery):
     user_state[call.from_user.id] = "youtube"
     await call.message.answer("YouTube link tashlang")
     await call.answer()
-#----------- suniy intelekt
-@dp.callback_query(F.data == "ai")
-async def ai_mode(call: CallbackQuery):
-    user_state[call.from_user.id] = "ai"
-    await call.message.answer("🤖 AI mode ON. Savol yozing")
-    await call.answer()
 #--------- MUSIC BOT ---------
 @dp.callback_query(F.data == "music")
 async def music_mode(call: CallbackQuery):
@@ -281,29 +275,6 @@ def make_qr(text: str):
 async def router(message: Message):
     user_id = message.from_user.id
     state = user_state.get(user_id)
-    state = user_state.get(user_id)
-    # ---------------- AI ----------------
-    if state == "ai":
-        await message.answer("⏳ O‘ylayapman...")
-
-        try:
-            response = client.models.generate_content(
-                model="gemini-3-flash-preview",
-                contents=message.text
-            )
-
-            await message.answer(response.text)
-
-        except Exception as e:
-            print("ERROR:", e)
-
-            if "429" in str(e):
-                await message.answer("⏳ Limit tugadi, keyinroq urin")
-            else:
-                await message.answer("❌ AI xatolik")
-
-        return
-       
     # ---------------- QR ----------------
     if state == "qr":
         try:
@@ -334,17 +305,14 @@ async def router(message: Message):
 
         try:
             filename = f"{uuid.uuid4()}.mp4"
-
-            ydl_opts = {
-              "format": "best[height<=480]",
-               "outtmpl": filename,
-                "noplaylist": True, 
-    "outtmpl": filename,
-    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    "noplaylist": True,
-    "cookiefile": "www.youtube.com_cookies.txt",
-    "quiet": False
-            }
+            
+        ydl_opts = {
+            "format": "best[height<=480]",
+            "cookiefile": "www.youtube.com_cookies.txt",
+            "outtmpl": filename,
+            "noplaylist": True,
+            "quiet": False
+        }
 
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 ydl.download([url])
