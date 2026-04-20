@@ -241,7 +241,6 @@ async def yt_mode(call: CallbackQuery):
     user_state[call.from_user.id] = "youtube"
     await call.message.answer("YouTube link tashlang")
     await call.answer()
-        # ---------------- YOUTUBE ----------------
 if state == "youtube":
         url = message.text.split("?")[0]
 
